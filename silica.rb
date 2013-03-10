@@ -20,7 +20,7 @@ require 'silica_heuristics.rb'
 require 'reach_others.rb'
 require 'progress.rb'
 
-class SilicaV2 < UseMjaiComponent
+class Silica < UseMjaiComponent
 
   def initialize(name, room)
     super()

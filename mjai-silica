@@ -6,7 +6,7 @@ require 'json'
 require 'uri'
 require 'thread'
 
-require 'silica_v2.rb'
+require 'silica.rb'
 require 'protocol.rb'
 
 uri = URI.parse(ARGV[0])
@@ -22,7 +22,7 @@ begin
   socket.sync = true
   id = nil
 
-  ai = SilicaV2.new(name, room)
+  ai = Silica.new(name, room)
 
   ERRBUF = Queue.new
 
