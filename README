@@ -1,0 +1,55 @@
+mjai-silica: AI for mjai
+
+version: 0.1.0
+MIT Lisence
+
+This is a rule-based AI for mjai.
+Author of this AI is 七段 in 天鳳 (http://tenhou.net).
+
+Silica is written in Ruby.
+How to run:
+`./mjai-silica mjsonp://localhost:11600/default`
+
+Silica rarely violate the rule (for example, kuikae).
+
+TODO:
+- danger estimation function
+- consider the scores
+- precise oshi-hiki
+- honitsu and chinitsu
+- ori to non-reach players
+
+Details are written in Japanese.
+
+===
+
+アルゴリズムについて:
+
+基本的に、１枚切ってみて評価関数にかけて最高のものを選ぶだけ。
+評価関数は
+シャンテン数 * (-INF) + 受け入れ * 50 + 牌の点数合計
+ただし、
+- 受け入れは、引くとシャンテン数が下がる牌の数
+- 牌の点数合計は、牌に割り振られた点数の合計。字牌は低く、中張牌は高い。
+
+先制リーチを受けて、テンパイしていないorフリテンの場合、オリる。
+危険度はほぼとつげき東北式。非常に雑なので改良の余地が多いにある。
+危険度が同じな場合、通常の評価関数にかけて良いほうを選ぶ。
+
+silicaは、役を4種類しか知らない。
+- リーチ
+- タンヤオ
+- チートイツ
+- 役牌
+
+面前でテンパイすると、リーチをする。
+役牌とタンヤオでのみ、鳴きをする。
+
+役なしやフリテン、同順で和了らないよう、ロンするときは上述の役があるかどうか確認している。
+
+ソースコードについて:
+mjai-silicaが実行可能なソースコードで、silicaの本体はsilica.rb。
+
+Silicaクラスには非常に本質的な分岐処理が書いてある。他の瑣末な処理は他のクラスに委譲。
+例えば、手牌の更新や、手牌のシャンテン数を求める処理は、Tehaiクラスに書いてあるし、フリテンのルールを管理する処理はFuritenCheckerクラスに書いてある。
+このように、やりたいこと一つにつき一つのクラスという構造で、UseMjaiComponentクラス、MjaiComponentLeafクラスは、そのためのユーティリティクラス。

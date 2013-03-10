@@ -1,0 +1,47 @@
+require 'use_mjai_component.rb'
+require 'tehai.rb'
+require 'reach.rb'
+
+class FuritenChecker < UseMjaiComponent
+
+  # members
+  # @id
+  # @tehai
+  # @reach
+  # @furiten_list
+
+  def initialize
+    super
+    @id = nil
+    @tehai = add_component(Tehai.new)
+    @reach = add_component(Reach.new)
+    @furiten_list = nil
+
+  end
+
+  def check
+    @furiten_list.any? do |pai|
+      @tehai.shanten_added(pai, true) == -1
+    end
+  end
+
+  # interface MjaiComponent
+
+  def start_game(action)
+    super
+    @id = action['id']
+  end
+
+  def start_kyoku(action)
+    super
+    @furiten_list = []
+  end
+
+  def dahai(action)
+    super
+    if action['actor'] == @id || @reach.check
+      @furiten_list << Pai.parse(action['pai'])
+    end
+  end
+
+end

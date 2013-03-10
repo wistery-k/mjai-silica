@@ -1,0 +1,104 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+
+require 'socket'
+require 'json'
+require 'uri'
+require 'thread'
+
+require 'silica_v2.rb'
+require 'protocol.rb'
+
+uri = URI.parse(ARGV[0])
+name = 'silica'
+room = uri.path[1..-1]
+
+File.write("hoge.txt", "host = %s, port = %d, room = %s" % [uri.host, uri.port, room])
+$stderr.puts "host = %s, port = %d" % [uri.host, uri.port]
+
+begin
+
+  socket = TCPSocket.new(uri.host, uri.port)
+  socket.sync = true
+  id = nil
+
+  ai = SilicaV2.new(name, room)
+
+  ERRBUF = Queue.new
+
+  def errbuf_append(str)
+    ERRBUF << str
+    if ERRBUF.length > 50 then
+      ERRBUF.pop
+    end
+  end
+
+  socket.each_line() do |line|
+    
+    $stderr.puts("<-\t#{line.chomp}")
+    errbuf_append("<-\t#{line.chomp}")
+    action = JSON.parse(line.chomp)
+    case action['type']
+    when 'hello'
+      response = ai.hello(action)
+    when 'start_game'
+      response = ai.start_game(action)
+    when 'end_game'
+      ai.end_game(action)
+      break
+    when 'tsumo'
+      response = ai.tsumo(action)
+    when 'start_kyoku'
+      response = ai.start_kyoku(action)
+    when 'dahai'
+      response = ai.dahai(action)
+    when 'reach'
+      response = ai.reach(action)
+    when 'reach_accepted'
+      response = ai.reach_accepted(action)
+    when 'pon'
+      response = ai.pon(action)
+    when 'chi'
+      response = ai.chi(action)
+    when 'daiminkan'
+      response = ai.daiminkan(action)
+    when 'ankan'
+      response = ai.ankan(action)
+    when 'kakan'
+      response = ai.kakan(action)
+    when 'dora'
+      response = ai.dora(action)
+    when 'hora'
+      response = ai.hora(action)
+    when 'end_kyoku'
+      response = ai.end_kyoku(action)
+    when 'error'
+      File.open('errors.txt', 'a') do |f|
+        puts "#########################"
+        puts "#!!!!!!!!!error!!!!!!!!!#"
+        puts "#########################"
+        while not ERRBUF.empty? do
+          f.puts ERRBUF.pop
+        end
+        f.puts "ai dump:"
+        ai.dump(f)
+      end
+      break
+    else
+      response = Action::none()
+    end
+
+    $stderr.puts("->\t#{JSON.dump(response)}")
+    errbuf_append("->\t#{JSON.dump(response)}")
+    socket.puts(JSON.dump(response))
+    
+  end
+
+rescue => e
+  puts e.message
+  puts e.backtrace
+  raise
+ensure
+  socket.close if socket
+  ai.dump($stderr)
+end
