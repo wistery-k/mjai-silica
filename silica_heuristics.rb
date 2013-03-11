@@ -11,18 +11,18 @@ module SilicaHeuristics
       ans += 5 * dora.count(pai)
     else
       ans += pai.num4
-      ans += 3 if pai.red # 赤ドラ
+      ans += 10 if pai.red # 赤ドラ
 
       dora.each do |d|
         if pai.suit == d.suit then
           diff = (pai.num - d.num).abs
-          ans += 3 if diff == 0 # ドラ # 足して5
+          ans += 8 if diff == 0 # ドラ # 足して10
           ans += 2 if diff <= 2 # ドラそば
         end
       end
 
     end
-    ans
+    return ans
   end
 
 end
