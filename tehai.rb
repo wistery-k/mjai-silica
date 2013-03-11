@@ -69,7 +69,9 @@ class Tehai < MjaiComponentLeaf
   def ukeire_list_removed(pai_count, pais, yakuari)
     counts = count_array(yakuari)
     pais.each do |p|
-      counts[p.to_i] -= 1
+      if yakuari || !p.yaochu?
+        counts[p.to_i] -= 1
+      end
     end
     current_shanten = Shanten::all(counts, (@tehai.length - pais.length) / 3)
     ans = 0
