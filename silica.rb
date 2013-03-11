@@ -85,7 +85,7 @@ class Silica < UseMjaiComponent
         @tehai.shanten_removed(pai, yakuari || menzen),
         @tehai.ukeire_removed(@pai_count, pai, yakuari || menzen),
         (-1) * SilicaHeuristics::pai_point(pai, @yakuhai, @dora)
-    )
+      )
     end
 
     if (@tehai.shanten(yakuari || menzen) > 0 || @furiten.check) && @reach_others.check # オリ

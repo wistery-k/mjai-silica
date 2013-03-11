@@ -7,7 +7,7 @@ class SilicaEvalInfo
   end
 
   def to_i
-    (-100000) * @shanten + @ukeire * 30 + @points
+    (-100000) * @shanten + 30 * @ukeire + @points
   end
 
   attr_reader :shanten, :ukeire, :points
