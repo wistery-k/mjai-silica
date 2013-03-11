@@ -11,11 +11,11 @@ class Dora < MjaiComponentLeaf
 
   def start_kyoku(action)
     @dora = []
-    @dora << Pai.parse(action['dora_marker']).succ
+    @dora << Pai.parse(action['dora_marker']).remove_red.succ
   end
 
   def dora(action)
-    @dora << Pai.parse(action['dora_marker']).succ
+    @dora << Pai.parse(action['dora_marker']).remove_red.succ
   end
 
 end

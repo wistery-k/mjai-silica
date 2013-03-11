@@ -10,7 +10,7 @@ Silica is written in Ruby.
 How to run:
 `./mjai-silica mjsonp://localhost:11600/default`
 
-Silica rarely violate the rule (for example, kuikae).
+Silica rarely violates the rule (for example, kuikae).
 
 TODO:
 - danger estimation function
