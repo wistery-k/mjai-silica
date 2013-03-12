@@ -24,7 +24,7 @@ class Furo < MjaiComponentLeaf
     if action['actor'] == @id
       pai = Pai.parse(action['pai'])
       consumed = action['consumed'].map{|s|Pai.parse(s)}
-      @furo << { :type => :pon, :pai => pai, :consumed => consumed }
+      @furo << { :type => action['type'].to_sym, :pai => pai, :consumed => consumed }
     end
   end
 
