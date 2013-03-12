@@ -1,23 +1,17 @@
 require 'pai'
 require 'forwardable'
 
-require 'mjai_component_leaf.rb'
-
 class Tehai < MjaiComponentLeaf
 
   def initialize
     @id = nil
-    @tehai = []
+    @tehai = nil
   end
 
   extend Forwardable
   
   def_delegators :@tehai, :count, :any?, :length, :[], :map, :all?
 
-  def clear(tehai = [])
-    @tehai = tehai
-  end
-  
   def remove(pai)
     @tehai.delete_at(@tehai.index(pai))
   end
@@ -31,9 +25,13 @@ class Tehai < MjaiComponentLeaf
     end
     counts
   end
+
+  def need_mentsu(dx)
+    (@tehai.length - 1 + dx) / 3
+  end
   
   def shanten(yakuari)
-    Shanten::all(count_array(yakuari), @tehai.length / 3)
+    Shanten::all(count_array(yakuari), need_mentsu(0))
   end
 
   def shanten_added(pai, yakuari)
@@ -41,7 +39,7 @@ class Tehai < MjaiComponentLeaf
     if yakuari || !pai.yaochu?
       counts[pai.to_i] += 1
     end
-    return Shanten::all(counts, (@tehai.length + 1) / 3)
+    return Shanten::all(counts, need_mentsu(+1))
   end
 
   def shanten_removed(pai, yakuari)
@@ -56,7 +54,7 @@ class Tehai < MjaiComponentLeaf
         counts[pai.to_i] -= 1
       end
     end
-    return Shanten::all(counts, (@tehai.length - pais.length) / 3)
+    return Shanten::all(counts, need_mentsu(-pais.length))
   end
 
   def ukeire(pai_count, yakuari)
@@ -74,13 +72,13 @@ class Tehai < MjaiComponentLeaf
         counts[p.to_i] -= 1
       end
     end
-    current_shanten = Shanten::all(counts, (@tehai.length - pais.length) / 3)
+    current_shanten = Shanten::all(counts, need_mentsu(-pais.length))
     ans = 0
     34.times do |pai|
       if counts[pai] < 4
         if yakuari || !Pai.new(pai / 9, pai % 9, false).yaochu?
           counts[pai] += 1
-          if Shanten::all(counts, (@tehai.length - pais.length + 1) / 3) < current_shanten
+          if Shanten::all(counts, need_mentsu(-pais.length+1)) < current_shanten
             ans += pai_count[pai]
           end
           counts[pai] -= 1
@@ -133,7 +131,7 @@ class Tehai < MjaiComponentLeaf
   end
 
   def start_kyoku(action)
-    clear(action['tehais'][@id].map{|s|Pai.parse(s)})
+    @tehai = action['tehais'][@id].map{|s|Pai.parse(s)}
   end
 
   def tsumo(action)
