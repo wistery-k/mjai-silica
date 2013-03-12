@@ -27,7 +27,7 @@ class SilicaRiskEstimate < MjaiComponentLeaf
         else
           # 筋に掛かってると危険度が下がる
           cnt = SUJI[pai.num].count{|i|anpai.include?(Pai.new(pai.suit, i, false))}
-          DEFAULT_RISK[pai.num - 1] - 4 * cnt
+          DEFAULT_RISK[pai.num] - 4 * cnt
         end
       end
 

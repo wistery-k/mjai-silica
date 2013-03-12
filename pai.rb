@@ -53,7 +53,7 @@ class Pai
   end
 
   def to_i
-    @num + 9 * @suit
+    9 * @suit + @num
   end
 
   def to_s
@@ -66,8 +66,6 @@ class Pai
 
   def ==(other)
     if self.class != other.class then
-      false
-    elsif @suit == 3 && @num == 7 then
       false
     else
       @num == other.num && @suit == other.suit && @red == other.red
