@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+
+require 'socket'
+require 'json'
+require 'uri'
+
+require 'silica.rb'
+require 'protocol.rb'
+
+file_name = ARGV[0]
+
+$stderr.puts "file name = #{file_name}"
+
+name = 'silica'
+room = 'default'
+
+begin
+
+  file = File.open(file_name)
+  id = nil
+
+  ai = Silica.new(name, room)
+
+  file.each_line() do |line|
+    
+    $stderr.puts("<-\t#{line.chomp}")
+
+    action = JSON.parse(line.chomp)
+
+    case action['type']
+    when 'hello'
+      response = ai.hello(action)
+    when 'start_game'
+      response = ai.start_game(action)
+    when 'end_game'
+      ai.end_game(action)
+      break
+    when 'tsumo'
+      response = ai.tsumo(action)
+    when 'start_kyoku'
+      response = ai.start_kyoku(action)
+    when 'dahai'
+      response = ai.dahai(action)
+    when 'reach'
+      response = ai.reach(action)
+    when 'reach_accepted'
+      response = ai.reach_accepted(action)
+    when 'pon'
+      response = ai.pon(action)
+    when 'chi'
+      response = ai.chi(action)
+    when 'daiminkan'
+      response = ai.daiminkan(action)
+    when 'ankan'
+      response = ai.ankan(action)
+    when 'kakan'
+      response = ai.kakan(action)
+    when 'dora'
+      response = ai.dora(action)
+    when 'hora'
+      response = ai.hora(action)
+    when 'end_kyoku'
+      response = ai.end_kyoku(action)
+    when 'error'
+      $stderr.puts "#########################"
+      $stderr.puts "#!!!!!!!!!error!!!!!!!!!#"
+      $stderr.puts "#########################"
+      $stderr.puts "ai dump:"
+      ai.dump($stderr)
+      break
+    else
+      response = Action::none()
+    end
+
+    $stderr.puts("->\t#{JSON.dump(response)}")
+    
+  end
+
+ensure
+  file.close if file
+  ai.dump($stderr) if ai
+end
