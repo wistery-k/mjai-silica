@@ -49,6 +49,7 @@ class Tehai < MjaiComponentLeaf
   end
 
   def shanten_list_removed(pais, yakuari)
+    
     counts = count_array(yakuari)
     pais.each do |pai|
       if yakuari || !pai.yaochu?
