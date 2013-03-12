@@ -47,7 +47,7 @@ class SilicaRiskEstimate < UseMjaiComponent
           
           if furiten_dx
             num = pai.num + furiten_dx
-            next if num >= 0 && num <= 9 && @anpais.include?(Pai.new(pai.suit, num, false))
+            next if num >= 0 && num <= 8 && @anpais.include?(Pai.new(pai.suit, num, false))
           end
           
           upai = MS[i][0]
