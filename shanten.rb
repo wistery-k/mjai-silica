@@ -83,7 +83,7 @@ module Shanten
         tehai[pai] -= 2
         ans = [ans, pick_menta(tehai, need_mentsu) - 1].min
         tehai[pai] += 2
-        return ans
+        return ans - (4 - need_mentsu) * 2
       end
     end
     

@@ -21,6 +21,7 @@ class SilicaRiskEstimate < UseMjaiComponent
   MS = [[[-2, -1], -3], [[-1, 1], nil], [[1, 2], 3]]
 
   def initialize
+    super
     @id = nil
     @anpais = Array.new(4)
     @reaches = Array.new(4)
@@ -65,10 +66,12 @@ class SilicaRiskEstimate < UseMjaiComponent
   end
 
   def start_game(action)
+    super
     @id = action['id']
   end
 
   def start_kyoku(action)
+    super
     4.times do |i|
       @anpais[i] = Array.new
       @reaches[i] = false
@@ -76,6 +79,7 @@ class SilicaRiskEstimate < UseMjaiComponent
   end
 
   def dahai(action)
+    super
     actor = action['actor']
     pai = Pai.parse(action['pai'])
 
@@ -87,6 +91,7 @@ class SilicaRiskEstimate < UseMjaiComponent
   end
 
   def reach(action)
+    super
     @reaches[action['actor']] = true
   end
 

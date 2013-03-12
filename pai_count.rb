@@ -19,7 +19,7 @@ class PaiCount < MjaiComponentLeaf
     @id = action['id']
   end
 
-  def start_kyoku(action)    
+  def start_kyoku(action)
     @pai_count = Array.new(34, 4)
 
     action['tehais'][@id].map{|s|Pai.parse(s)}.each do |p|

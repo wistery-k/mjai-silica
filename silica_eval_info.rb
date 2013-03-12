@@ -10,5 +10,9 @@ class SilicaEvalInfo
     (-100000) * @shanten + 30 * @ukeire + @points
   end
 
+  def to_s
+    "EvalInfo(%d, %d, %d)" % [@shanten, @ukeire, @points]
+  end
+
   attr_reader :shanten, :ukeire, :points
 end
