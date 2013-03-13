@@ -13,7 +13,6 @@ uri = URI.parse(ARGV[0])
 name = 'silica'
 room = uri.path[1..-1]
 
-File.write("hoge.txt", "host = %s, port = %d, room = %s" % [uri.host, uri.port, room])
 $stderr.puts "host = %s, port = %d" % [uri.host, uri.port]
 
 begin
