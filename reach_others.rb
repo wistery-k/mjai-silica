@@ -17,7 +17,7 @@ class ReachOthers < MjaiComponentLeaf
     @flg = false
   end
 
-  def reach_accepted(action)
+  def reach(action)
     if action['actor'] != @id
       @flg = true
     end

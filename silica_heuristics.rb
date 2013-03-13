@@ -17,7 +17,7 @@ module SilicaHeuristics
         if pai.suit == d.suit then
           diff = (pai.num - d.num).abs
           ans += 8 if diff == 0 # ドラ # 足して10
-          ans += 2 if diff <= 2 # ドラそば
+          ans += 2 if pai.suit != 3 && diff <= 2 # ドラそば
         end
       end
 
