@@ -37,7 +37,7 @@ class SilicaRiskEstimate < UseMjaiComponent
 
     (0..3).each do |who|
 
-      next if who == @id || @anpais[who].include?(pai)
+      next if who == @id || !@reaches[who] || @anpais[who].include?(pai)
       
       ans += n
       ans += n * (n-1) / 2 # (n, 2)
