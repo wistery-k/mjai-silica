@@ -1,6 +1,8 @@
 require 'pai'
 require 'forwardable'
 
+require 'mjai_component_leaf.rb'
+
 class Tehai < MjaiComponentLeaf
 
   def initialize
