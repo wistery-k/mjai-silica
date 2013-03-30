@@ -88,6 +88,10 @@ class Silica < UseMjaiComponent
       )
     end
 
+    @tehai.length.times do |i|
+      $stderr.puts "%s : %s" % [@tehai[i], sute_tehais[i]]
+    end
+    
     if (@tehai.shanten(yakuari || menzen) > 0 || @furiten.check) && @reach_others.check # オリ
       risks = @tehai.map do |pai| # 牌の危険度を評価。
         @risk.estimate(pai)
@@ -197,6 +201,8 @@ class Silica < UseMjaiComponent
             (meld[:type] != :chi || (@id - actor + 4) % 4 == 1) && (yakuari || (!pai.yaochu? && meld[:consumed].all?{|p|!p.yaochu?}))
           end
           alternatives << { :type => :none }
+
+          $stderr.puts alternatives.to_s
 
           sel = alternatives.max_by do |meld|
             if meld[:type] == :none
