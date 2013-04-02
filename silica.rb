@@ -121,8 +121,8 @@ class Silica < UseMjaiComponent
     consumed = meld[:consumed]
     SilicaEvalInfo.new(
       nil,
-      @tehai.shanten_list_removed(consumed, yakuari, mask),
-      @tehai.ukeire_list_removed(@pai_count, consumed, yakuari, mask),
+      @tehai.shanten_list_removed(consumed, yakuari, Shanten::NORMAL),
+      @tehai.ukeire_list_removed(@pai_count, consumed, yakuari, Shanten::NORMAL),
       0,
       nil
     )
