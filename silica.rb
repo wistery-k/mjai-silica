@@ -19,6 +19,7 @@ require 'silica_eval_info.rb'
 require 'silica_heuristics.rb'
 require 'reach_others.rb'
 require 'progress.rb'
+require 'kuikae.rb'
 
 class Silica < UseMjaiComponent
 
@@ -40,7 +41,8 @@ class Silica < UseMjaiComponent
     @furo      = add_component(Furo.new)
     @risk      = add_component(SilicaRiskEstimate.new)
     @reach_others = add_component(ReachOthers.new)
-    @progress = add_component(Progress.new)
+    @progress  = add_component(Progress.new)
+    @kuikae    = add_component(KuikaeChecker.new)
 
     add_component(SilicaStats.new)
 
@@ -78,30 +80,26 @@ class Silica < UseMjaiComponent
     @furo.empty?
   end
 
-  def what_to_discard(pai)
+  def what_to_discard(tsumo_pai)
 
-    sute_tehais = @tehai.map do |pai| # 1枚捨てて手牌を評価。
+    cs = @tehai.select{|pai|!@kuikae.check(pai)}.map do |pai|
       SilicaEvalInfo.new(
+        pai,
         @tehai.shanten_removed(pai, yakuari || menzen),
         @tehai.ukeire_removed(@pai_count, pai, yakuari || menzen),
-        (-1) * SilicaHeuristics::pai_point(pai, @yakuhai, @dora)
+        (-1) * SilicaHeuristics::pai_point(pai, @yakuhai, @dora),
+        @risk.estimate(pai)
       )
     end
 
-    @tehai.length.times do |i|
-      $stderr.puts "%s : %s" % [@tehai[i], sute_tehais[i]]
+    cs.each do |e|
+      $stderr.puts e.to_s
     end
     
     if (@tehai.shanten(yakuari || menzen) > 0 || @furiten.check) && @reach_others.check # オリ
-      risks = @tehai.map do |pai| # 牌の危険度を評価。
-        @risk.estimate(pai)
-      end
-      (0...@tehai.length).each do |i|
-        $stderr.puts "%s: %d" % [@tehai[i].to_s, risks[i]]
-      end
-      (0...@tehai.length).max_by{|i| risks[i] * (-1000000) + sute_tehais[i].to_i}
+      cs.max_by{|c| c.risk * (-1000000) + c.to_i}.pai
     else
-      (0...@tehai.length).max_by{|i| sute_tehais[i].to_i}
+      cs.max_by{|c| c.to_i}.pai
     end
     
   end
@@ -121,8 +119,7 @@ class Silica < UseMjaiComponent
 
   def discard(pai)
 
-    ix = what_to_discard(pai)
-    d_pai = @tehai[ix]
+    d_pai = what_to_discard(pai)
 
     $stderr.puts "tehai: = #{@tehai.to_s}"
     $stderr.puts "selected_pai = #{d_pai}"

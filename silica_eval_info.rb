@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+
 class SilicaEvalInfo
-  def initialize(shanten, ukeire, points)
+  def initialize(pai, shanten, ukeire, points, risk)
+    @pai = pai
     @shanten = shanten
     @ukeire = ukeire
     @points = points
+    @risk = risk
   end
 
   def to_i
@@ -11,8 +14,8 @@ class SilicaEvalInfo
   end
 
   def to_s
-    "EvalInfo(%d, %d, %d)" % [@shanten, @ukeire, @points]
+    "EvalInfo(%s, %d, %d, %d, %d)" % [@pai, @shanten, @ukeire, @points, @risk]
   end
 
-  attr_reader :shanten, :ukeire, :points
+  attr_reader :pai, :shanten, :ukeire, :points, :risk
 end
