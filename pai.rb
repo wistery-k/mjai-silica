@@ -18,18 +18,6 @@ class Pai
     Pai.new(3, 7, false) # 34
   end
 
-  def succ
-    if @suit == 3 then
-      if @num <= 3 then
-        Pai.new(@suit, (@num + 1) % 4, @red)
-      else
-        Pai.new(@suit, @num % 3 + 4, @red)
-      end
-    else
-      Pai.new(@suit, (@num + 1) % 9, @red)
-    end
-  end
-
   def jihai?
     @suit == 3
   end

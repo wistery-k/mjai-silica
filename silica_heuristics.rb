@@ -14,14 +14,7 @@ module SilicaHeuristics
     else
       ans += SUHAI_POINT[pai.num4]
       ans += 10 if pai.red # 赤ドラ
-
-      dora.each do |d|
-        if pai.suit == d.suit then
-          diff = (pai.num - d.num).abs
-          ans += 8 if diff == 0 # ドラ # 足して10
-          ans += 2 if pai.suit != 3 && diff <= 2 # ドラそば
-        end
-      end
+      ans += 10 * dora.count(pai)
 
     end
     return ans
