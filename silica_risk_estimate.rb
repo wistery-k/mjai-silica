@@ -43,7 +43,7 @@ class SilicaRiskEstimate < UseMjaiComponent
       ans += n * (n-1) / 2 # (n, 2)
       
       if !pai.jihai?
-        (0..2).each do |i|
+        3.times do |i|
           furiten_dx = MS[i][1]
           
           if furiten_dx
