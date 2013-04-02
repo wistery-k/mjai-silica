@@ -41,7 +41,7 @@ class DojunChecker < UseMjaiComponent
       @last_pai = nil
       @flg = false
     else
-      if @last_pai && @tehai.shanten_added(@last_pai, true) == -1
+      if @last_pai && @tehai.shanten_added(@last_pai, true, Shanten::ALL) == -1
         @flg = true
       end
       @last_pai = Pai.parse(action['pai'])

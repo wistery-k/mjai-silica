@@ -2,6 +2,8 @@ require 'use_mjai_component.rb'
 require 'tehai.rb'
 require 'reach.rb'
 
+require 'shanten.rb'
+
 class FuritenChecker < UseMjaiComponent
 
   # members
@@ -21,7 +23,7 @@ class FuritenChecker < UseMjaiComponent
 
   def check
     @furiten_list.any? do |pai|
-      @tehai.shanten_added(pai, true) == -1
+      @tehai.shanten_added(pai, true, Shanten::ALL) == -1
     end
   end
 

@@ -1,6 +1,6 @@
 require 'mjai_component_leaf.rb'
 
-def KuikaeChecker < MjaiComponentLeaf
+class KuikaeChecker < MjaiComponentLeaf
 
   def initialize
     @consumed = nil

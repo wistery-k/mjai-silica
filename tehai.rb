@@ -12,7 +12,7 @@ class Tehai < MjaiComponentLeaf
 
   extend Forwardable
   
-  def_delegators :@tehai, :count, :any?, :length, :[], :map, :all?
+  def_delegators :@tehai, :count, :any?, :length, :[], :map, :all?, :select
 
   def remove(pai)
     @tehai.delete_at(@tehai.index(pai))
@@ -32,23 +32,23 @@ class Tehai < MjaiComponentLeaf
     (@tehai.length - 1 + dx) / 3
   end
   
-  def shanten(yakuari)
-    Shanten::all(count_array(yakuari), need_mentsu(0))
+  def shanten(yakuari, mask)
+    Shanten::all(count_array(yakuari), need_mentsu(0), mask)
   end
 
-  def shanten_added(pai, yakuari)
+  def shanten_added(pai, yakuari, mask)
     counts = count_array(yakuari)
     if yakuari || !pai.yaochu?
       counts[pai.to_i] += 1
     end
-    return Shanten::all(counts, need_mentsu(+1))
+    return Shanten::all(counts, need_mentsu(+1), mask)
   end
 
-  def shanten_removed(pai, yakuari)
-    shanten_list_removed([pai], yakuari)
+  def shanten_removed(pai, yakuari, mask)
+    shanten_list_removed([pai], yakuari, mask)
   end
 
-  def shanten_list_removed(pais, yakuari)
+  def shanten_list_removed(pais, yakuari, mask)
     
     counts = count_array(yakuari)
     pais.each do |pai|
@@ -56,31 +56,31 @@ class Tehai < MjaiComponentLeaf
         counts[pai.to_i] -= 1
       end
     end
-    return Shanten::all(counts, need_mentsu(-pais.length))
+    return Shanten::all(counts, need_mentsu(-pais.length), mask)
   end
 
-  def ukeire(pai_count, yakuari)
-    ukeire_list_removed(pai_count, [], yakuari)
+  def ukeire(pai_count, yakuari, mask)
+    ukeire_list_removed(pai_count, [], yakuari, mask)
   end
 
-  def ukeire_removed(pai_count, pai, yakuari)
-    ukeire_list_removed(pai_count, [pai], yakuari)
+  def ukeire_removed(pai_count, pai, yakuari, mask)
+    ukeire_list_removed(pai_count, [pai], yakuari, mask)
   end
 
-  def ukeire_list_removed(pai_count, pais, yakuari)
+  def ukeire_list_removed(pai_count, pais, yakuari, mask)
     counts = count_array(yakuari)
     pais.each do |p|
       if yakuari || !p.yaochu?
         counts[p.to_i] -= 1
       end
     end
-    current_shanten = Shanten::all(counts, need_mentsu(-pais.length))
+    current_shanten = Shanten::all(counts, need_mentsu(-pais.length), mask)
     ans = 0
     34.times do |pai|
       if counts[pai] < 4
         if yakuari || !Pai.new(pai / 9, pai % 9, false).yaochu?
           counts[pai] += 1
-          if Shanten::all(counts, need_mentsu(-pais.length+1)) < current_shanten
+          if Shanten::all(counts, need_mentsu(-pais.length+1), mask) < current_shanten
             ans += pai_count[pai]
           end
           counts[pai] -= 1

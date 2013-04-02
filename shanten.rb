@@ -5,6 +5,15 @@ module Shanten
 
   module_function
 
+  NORMAL = 1
+  CHITOI = 2
+  KOKUSI = 4
+
+  NO_NORMAL = 6
+  NO_CHITOI = 5
+  NO_KOKUSI = 3
+  ALL = 7
+
   def GET_TBL(key)
     buf = TBL[key >> 1] >> ((key & 1) << 4)
     [ buf & 0xF, (buf >> 4) & 0xF, (buf >> 8) & 0xF, (buf >> 12) & 0xF ]
@@ -115,8 +124,12 @@ module Shanten
     6 - toitsu + [7 - kind, 0].max
   end
 
-  def all(tehai, need_mentsu)
-    [normal(tehai, need_mentsu), kokushi(tehai), chitoi(tehai)].min
+  def all(tehai, need_mentsu, mask)
+    ans = 32
+    ans = [ans, normal(tehai, need_mentsu)].max if mask & NORMAL != 0
+    ans = [ans, chitoi(tehai)].max if mask & CHITOI != 0
+    ans = [ans, kokushi(tehai)].max if mask & KOKUSI != 0
+    return ans
   end
 
 end

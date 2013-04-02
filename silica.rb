@@ -80,13 +80,21 @@ class Silica < UseMjaiComponent
     @furo.empty?
   end
 
+  def mask
+    if menzen
+      Shanten::NORMAL | Shanten::CHITOI
+    else
+      Shanten::NORMAL
+    end
+  end
+
   def what_to_discard(tsumo_pai)
 
     cs = @tehai.select{|pai|!@kuikae.check(pai)}.map do |pai|
       SilicaEvalInfo.new(
         pai,
-        @tehai.shanten_removed(pai, yakuari || menzen),
-        @tehai.ukeire_removed(@pai_count, pai, yakuari || menzen),
+        @tehai.shanten_removed(pai, yakuari || menzen, mask),
+        @tehai.ukeire_removed(@pai_count, pai, yakuari || menzen, mask),
         (-1) * SilicaHeuristics::pai_point(pai, @yakuhai, @dora),
         @risk.estimate(pai)
       )
@@ -96,7 +104,7 @@ class Silica < UseMjaiComponent
       $stderr.puts e.to_s
     end
     
-    if (@tehai.shanten(yakuari || menzen) > 0 || @furiten.check) && @reach_others.check # オリ
+    if (@tehai.shanten(yakuari || menzen, mask) > 0 || @furiten.check) && @reach_others.check # オリ
       cs.max_by{|c| c.risk * (-1000000) + c.to_i}.pai
     else
       cs.max_by{|c| c.to_i}.pai
@@ -111,7 +119,13 @@ class Silica < UseMjaiComponent
 
   def eval_try_meld(meld)
     consumed = meld[:consumed]
-    SilicaEvalInfo.new(@tehai.shanten_list_removed(consumed, yakuari), @tehai.ukeire_list_removed(@pai_count, consumed, yakuari), 0)
+    SilicaEvalInfo.new(
+      nil,
+      @tehai.shanten_list_removed(consumed, yakuari, mask),
+      @tehai.ukeire_list_removed(@pai_count, consumed, yakuari, mask),
+      0,
+      nil
+    )
   end
 
   # silica#discard
@@ -123,13 +137,13 @@ class Silica < UseMjaiComponent
 
     $stderr.puts "tehai: = #{@tehai.to_s}"
     $stderr.puts "selected_pai = #{d_pai}"
-    $stderr.puts "shanten = #{@tehai.shanten_removed(d_pai, true)}"
+    $stderr.puts "shanten = #{@tehai.shanten_removed(d_pai, true, mask)}"
     $stderr.puts "@id = #{@id}"
 
     $stderr.puts "@furo.empty? = #{@furo.empty?}"
     $stderr.puts "@yama.length = #{@yama.length}"
 
-    if @furo.empty? && @yama.length >= 4 && @scores[@id] >= 1000 && @tehai.shanten_removed(d_pai, true) == 0
+    if @furo.empty? && @yama.length >= 4 && @scores[@id] >= 1000 && @tehai.shanten_removed(d_pai, true, mask) == 0
       @reach_pending = Action::dahai(@id, d_pai, d_pai == pai)
       Action::reach(@id)
     else
@@ -157,7 +171,7 @@ class Silica < UseMjaiComponent
     super
     pai = Pai.parse(action['pai'])
     if action['actor'] == @id
-      if @tehai.shanten(true) == -1 && can_agari(pai)
+      if @tehai.shanten(true, mask) == -1 && can_agari(pai)
         Action::hora(@id, @id, pai)
       elsif @reach.check
         Action::dahai(@id, pai, true) # この時点では手牌から取り除かない
@@ -184,7 +198,7 @@ class Silica < UseMjaiComponent
     if actor == @id
       Action::none()
     else
-      if @tehai.shanten_added(pai, true) == -1 && can_agari(pai) && !@furiten.check && !@dojun.check
+      if @tehai.shanten_added(pai, true, mask) == -1 && can_agari(pai) && !@furiten.check && !@dojun.check
         Action::hora(@id, actor, pai.to_s) # ロン
       else
         if @reach.check || @yama.length == 0 # ルール上鳴けない
@@ -203,7 +217,7 @@ class Silica < UseMjaiComponent
 
           sel = alternatives.max_by do |meld|
             if meld[:type] == :none
-              SilicaEvalInfo.new(@tehai.shanten(yakuari || menzen), @tehai.ukeire(@pai_count, yakuari || menzen), 50).to_i
+              SilicaEvalInfo.new(nil, @tehai.shanten(yakuari || menzen, mask), @tehai.ukeire(@pai_count, yakuari || menzen, mask), 50, nil).to_i
             else
               eval_try_meld(meld).to_i
             end
