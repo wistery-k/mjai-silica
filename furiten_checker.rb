@@ -15,15 +15,14 @@ class FuritenChecker < UseMjaiComponent
   def initialize
     super
     @id = nil
-    @tehai = add_component(Tehai.new)
     @reach = add_component(Reach.new)
     @furiten_list = nil
 
   end
 
-  def check
+  def check(tehai)
     @furiten_list.any? do |pai|
-      @tehai.shanten_added(pai, true, Shanten::ALL) == -1
+      tehai.shanten_added(pai, true, Shanten::ALL) == -1
     end
   end
 

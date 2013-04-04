@@ -88,6 +88,10 @@ class Silica < UseMjaiComponent
     end
   end
 
+  def should_ori
+    @reach_others.check && (@tehai.shanten(yakuari || menzen, mask) > 0 || @furiten.check(@tehai))
+  end
+
   def what_to_discard(tsumo_pai)
 
     cs = @tehai.select{|pai|!@kuikae.check(pai)}.map do |pai|
@@ -104,28 +108,12 @@ class Silica < UseMjaiComponent
       $stderr.puts e.to_s
     end
     
-    if (@tehai.shanten(yakuari || menzen, mask) > 0 || @furiten.check) && @reach_others.check # オリ
+    if should_ori
       cs.max_by{|c| c.risk * (-1000000) + c.to_i}.pai
     else
       cs.max_by{|c| c.to_i}.pai
     end
     
-  end
-
-  # silica#eval_try_meld
-  # 鳴いてみて評価する
-  # これは役牌ポンには使わないのでyakuariはこれでOK
-  #
-
-  def eval_try_meld(meld)
-    consumed = meld[:consumed]
-    SilicaEvalInfo.new(
-      nil,
-      @tehai.shanten_list_removed(consumed, yakuari, Shanten::NORMAL),
-      @tehai.ukeire_list_removed(@pai_count, consumed, yakuari, Shanten::NORMAL),
-      0,
-      nil
-    )
   end
 
   # silica#discard
@@ -183,6 +171,22 @@ class Silica < UseMjaiComponent
     end
   end
 
+  # silica#eval_try_meld
+  # 鳴いてみて評価する
+  # これは役牌ポンには使わないのでyakuariはこれでOK
+  #
+
+  def eval_try_meld(meld)
+    consumed = meld[:consumed]
+    SilicaEvalInfo.new(
+      nil,
+      @tehai.shanten_list_removed(consumed, yakuari, Shanten::NORMAL),
+      @tehai.ukeire_list_removed(@pai_count, consumed, yakuari, Shanten::NORMAL),
+      0,
+      nil
+    )
+  end
+
   # silica#dahai
   # 自分の打牌なら、なにもしない
   # もしロンできるならする
@@ -198,7 +202,7 @@ class Silica < UseMjaiComponent
     if actor == @id
       Action::none()
     else
-      if @tehai.shanten_added(pai, true, mask) == -1 && can_agari(pai) && !@furiten.check && !@dojun.check
+      if @tehai.shanten_added(pai, true, mask) == -1 && can_agari(pai) && !@furiten.check(@tehai) && !@dojun.check
         Action::hora(@id, actor, pai.to_s) # ロン
       else
         if @reach.check || @yama.length == 0 # ルール上鳴けない
