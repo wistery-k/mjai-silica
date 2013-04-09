@@ -3,6 +3,8 @@ require 'forwardable'
 
 require 'mjai_component_leaf.rb'
 
+require 'meld_discard.rb'
+
 class Tehai < MjaiComponentLeaf
 
   def initialize
@@ -93,13 +95,12 @@ class Tehai < MjaiComponentLeaf
   def list_naki(pai)
     ans = []
     cnt = @tehai.count(pai)
-
-    if cnt >= 2
-      ans << { :type => :pon, :pai => pai, :consumed => [pai, pai] }
-    end
-
+    
+    ans << Meld.new(:pon,       pai, [pai, pai]) if cnt >= 2
+    ans << Meld.new(:daiminkan, pai, [pai, pai, pai]) if cnt >= 3
+    
     if !pai.jihai?
-
+      
       pais = [-2, -1, 1, 2].map do |dx|
         nn = pai.num + dx
         if 0 <= nn && nn <= 8
@@ -108,17 +109,17 @@ class Tehai < MjaiComponentLeaf
           nil
         end
       end
-
+      
       cnts = pais.map{|p| p ? @tehai.count(p) : 0}
       
       [0, 1, 2, 3].each_cons(2) do |i, j|
         if cnts[i] >= 1 && cnts[j] >= 1
-          ans << { :type => :chi, :pai => pai, :consumed => [pais[i], pais[j]] }
+          ans << Meld.new(:chi, pai, [pais[i], pais[j]])
         end
       end
-
+      
     end
-
+    
     return ans
   end
 

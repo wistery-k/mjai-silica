@@ -177,7 +177,7 @@ class Silica < UseMjaiComponent
   #
 
   def eval_try_meld(meld)
-    consumed = meld[:consumed]
+    consumed = meld.consumed
     SilicaEvalInfo.new(
       nil,
       @tehai.shanten_list_removed(consumed, yakuari, Shanten::NORMAL),
@@ -213,21 +213,21 @@ class Silica < UseMjaiComponent
           Action::pon(@id, actor, pai, [pai, pai])
         else # 全列挙して比較する
           alternatives = @tehai.list_naki(pai).select do |meld|
-            (meld[:type] != :chi || (@id - actor + 4) % 4 == 1) && (yakuari || (!pai.yaochu? && meld[:consumed].all?{|p|!p.yaochu?}))
+            (meld.type != :chi || (@id - actor + 4) % 4 == 1) && (yakuari || (!pai.yaochu? && meld.consumed.all?{|p|!p.yaochu?}))
           end
-          alternatives << { :type => :none }
+          alternatives << Meld.new(:none, nil, [])
 
           $stderr.puts alternatives.to_s
 
           sel = alternatives.max_by do |meld|
-            if meld[:type] == :none
+            if meld.type == :none
               SilicaEvalInfo.new(nil, @tehai.shanten(yakuari || menzen, mask), @tehai.ukeire(@pai_count, yakuari || menzen, mask), 50, nil).to_i
             else
               eval_try_meld(meld).to_i
             end
           end
           
-          case sel[:type]
+          case sel.type
             when :none
               Action::none()
             when :pon
