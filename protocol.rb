@@ -22,12 +22,20 @@ module Action
     { :type => 'hora', :actor => actor, :target => target, :pai => pai }
   end
 
+  def naki(type, actor, target, pai, consumed)
+    { :type => type, :actor => actor, :target => target, :pai => pai, :consumed => consumed.map(&:to_s) }
+  end
+
   def pon(actor, target, pai, consumed)
-    { :type => 'pon', :actor => actor, :target => target, :pai => pai, :consumed => consumed.map(&:to_s) }
+    naki('pon', actor, target, pai, consumed)
   end
 
   def chi(actor, target, pai, consumed)
-    { :type => 'chi', :actor => actor, :target => target, :pai => pai, :consumed => consumed.map(&:to_s) }
+    naki('chi', actor, target, pai, consumed)
+  end
+
+  def daiminkan(actor, target, pai, consumed)
+    naki('daiminkan', actor, target, pai, consumed)
   end
 
 end

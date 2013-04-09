@@ -176,14 +176,13 @@ class Silica < UseMjaiComponent
   # これは役牌ポンには使わないのでyakuariはこれでOK
   #
 
-  def eval_try_meld(meld)
-    consumed = meld.consumed
+  def eval_meld_discard(md)
     SilicaEvalInfo.new(
-      nil,
-      @tehai.shanten_list_removed(consumed, yakuari, Shanten::NORMAL),
-      @tehai.ukeire_list_removed(@pai_count, consumed, yakuari, Shanten::NORMAL),
+      md.discard,
+      @tehai.shanten_list_removed(md.consumed_discard, yakuari, Shanten::NORMAL),
+      @tehai.ukeire_list_removed(@pai_count, md.consumed_discard, yakuari, Shanten::NORMAL),
       0,
-      nil
+      @risk.estimate(md.discard)
     )
   end
 
@@ -213,18 +212,18 @@ class Silica < UseMjaiComponent
           Action::pon(@id, actor, pai, [pai, pai])
         else # 全列挙して比較する
           alternatives = 
-            @tehai.list_naki(pai, (@id - actor + 4) % 4 == 1).select do |meld|
+            @tehai.list_naki_dahai(pai, (@id - actor + 4) % 4 == 1).select do |meld|
               yakuari || meld.all?{|p|!p.yaochu?}
             end
-          alternatives << Meld.new(:none, nil, [])
+          alternatives << MeldDiscard::None
 
           $stderr.puts alternatives.to_s
 
-          sel = alternatives.max_by do |meld|
-            if meld.type == :none
-              SilicaEvalInfo.new(nil, @tehai.shanten(yakuari || menzen, mask), @tehai.ukeire(@pai_count, yakuari || menzen, mask), 50, nil).to_i
+          sel = alternatives.max_by do |meld_discard|
+            if meld_discard.type == :none
+              SilicaEvalInfo.new(nil, @tehai.shanten(yakuari || menzen, mask), @tehai.ukeire(@pai_count, yakuari || menzen, mask), 50, 5).to_i # TODO: FIXME: 5 is hyper-tenuki
             else
-              eval_try_meld(meld).to_i
+              eval_meld_discard(meld_discard).to_i
             end
           end
           
@@ -232,9 +231,11 @@ class Silica < UseMjaiComponent
             when :none
               Action::none()
             when :pon
-              Action::pon(@id, actor, pai, sel[:consumed])
+              Action::pon(@id, actor, pai, sel.consumed)
             when :chi
-              Action::chi(@id, actor, pai, sel[:consumed])
+              Action::chi(@id, actor, pai, sel.consumed)
+            when :daiminkan
+              Action::daiminkan(@id, actor, pai, sel.consumed)
             else
               raise "assertion: ai#dahai: naki_type is invalid."
           end

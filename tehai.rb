@@ -133,8 +133,12 @@ class Tehai < MjaiComponentLeaf
       end
 
       t.map do |p|
-        MeldDiscard.new(meld, p)
-      end
+        if Pai.mentsu?(meld.consumed + [p])
+          nil
+        else
+          MeldDiscard.new(meld, p)
+        end
+      end.compact
     end
   end
 

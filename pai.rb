@@ -18,6 +18,14 @@ class Pai
     Pai.new(3, 7, false) # 34
   end
 
+  def self.mentsu?(ps)
+    ps = ps.sort
+    same_suit = ps[0].suit    == ps[1].suit && ps[1].suit    == ps[2].suit
+    kotsu     = ps[0].num     == ps[1].num  && ps[1].num     == ps[2].num
+    shuntsu   = ps[0].num + 1 == ps[1].num  && ps[1].num + 1 == ps[2].num
+    same_suit && (kotsu || shuntsu)
+  end
+
   def jihai?
     @suit == 3
   end

@@ -10,11 +10,11 @@ class Meld
   end
 
   def all?(&b)
-    b.call(pai) && consumed.all?(b)
+    yield(pai) && consumed.all?(&b)
   end
 
   def any?(&b)
-    b.call(pai) || consumed.any?(b)
+    yield(pai) || consumed.any?(&b)
   end
 end
 
@@ -29,5 +29,19 @@ class MeldDiscard
     @meld = meld
     @discard = discard
   end
+
+  def consumed_discard
+    @meld.consumed + [@discard]
+  end
+
+  def all?(&b)
+    @meld.all?(&b)
+  end
+
+  def any?(&b)
+    @meld.any?(&b)
+  end
+
+  None = MeldDiscard.new(Meld.new(:none, nil, nil), :nil)
 
 end
