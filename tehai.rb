@@ -123,6 +123,21 @@ class Tehai < MjaiComponentLeaf
     return ans
   end
 
+  def list_naki_dahai(pai, allow_chi)
+    melds = list_naki(pai, allow_chi)
+
+    melds.flat_map do |meld|
+      t = @tehai.clone
+      meld.consumed.each do |c|
+        t.delete_at(t.index(c))
+      end
+
+      t.map do |p|
+        MeldDiscard.new(meld, p)
+      end
+    end
+  end
+
   def to_s
     @tehai.sort.map{|p|p.to_s}.join(" ")
   end
