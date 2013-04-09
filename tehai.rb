@@ -92,14 +92,14 @@ class Tehai < MjaiComponentLeaf
     return ans
   end
 
-  def list_naki(pai)
+  def list_naki(pai, allow_chi)
     ans = []
     cnt = @tehai.count(pai)
     
     ans << Meld.new(:pon,       pai, [pai, pai]) if cnt >= 2
     ans << Meld.new(:daiminkan, pai, [pai, pai, pai]) if cnt >= 3
     
-    if !pai.jihai?
+    if allow_chi && !pai.jihai?
       
       pais = [-2, -1, 1, 2].map do |dx|
         nn = pai.num + dx
@@ -119,7 +119,7 @@ class Tehai < MjaiComponentLeaf
       end
       
     end
-    
+
     return ans
   end
 

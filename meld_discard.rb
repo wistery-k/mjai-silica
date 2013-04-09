@@ -8,6 +8,14 @@ class Meld
     @pai = pai
     @consumed = consumed
   end
+
+  def all?(&b)
+    b.call(pai) && consumed.all?(b)
+  end
+
+  def any?(&b)
+    b.call(pai) || consumed.any?(b)
+  end
 end
 
 class MeldDiscard

@@ -212,9 +212,10 @@ class Silica < UseMjaiComponent
         elsif @yakuhai.check(pai) && @tehai.count(pai) == 2 # 役牌は鳴く
           Action::pon(@id, actor, pai, [pai, pai])
         else # 全列挙して比較する
-          alternatives = @tehai.list_naki(pai).select do |meld|
-            (meld.type != :chi || (@id - actor + 4) % 4 == 1) && (yakuari || (!pai.yaochu? && meld.consumed.all?{|p|!p.yaochu?}))
-          end
+          alternatives = 
+            @tehai.list_naki(pai, (@id - actor + 4) % 4 == 1).select do |meld|
+              yakuari || meld.all?{|p|!p.yaochu?}
+            end
           alternatives << Meld.new(:none, nil, [])
 
           $stderr.puts alternatives.to_s
