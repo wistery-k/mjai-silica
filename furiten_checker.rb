@@ -17,11 +17,10 @@ class FuritenChecker < UseMjaiComponent
     @id = nil
     @reach = add_component(Reach.new)
     @furiten_list = nil
-
   end
 
   def check(tehai)
-    @furiten_list.any? do |pai|
+    @furiten_list[0..-2].any? do |pai|
       tehai.shanten_added(pai, true, Shanten::ALL) == -1
     end
   end

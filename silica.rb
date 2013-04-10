@@ -201,6 +201,10 @@ class Silica < UseMjaiComponent
     if actor == @id
       Action::none()
     else
+      $stderr.puts "shanten_added = #{@tehai.shanten_added(pai, true, mask)}"
+      $stderr.puts "can_agari = #{can_agari(pai)}"
+      $stderr.puts "furiten = #{@furiten.check(@tehai)}"
+      $stderr.puts "dojun = #{@dojun.check}"
       if @tehai.shanten_added(pai, true, mask) == -1 && can_agari(pai) && !@furiten.check(@tehai) && !@dojun.check
         Action::hora(@id, actor, pai.to_s) # ロン
       else
