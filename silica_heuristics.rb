@@ -15,7 +15,6 @@ module SilicaHeuristics
       ans += SUHAI_POINT[pai.num4]
       ans += 10 if pai.red # 赤ドラ
       ans += 10 * dora.count(pai)
-
     end
     return ans
   end
