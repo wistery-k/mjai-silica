@@ -126,9 +126,9 @@ module Shanten
 
   def all(tehai, need_mentsu, mask)
     ans = 32
-    ans = [ans, normal(tehai, need_mentsu)].max if mask & NORMAL != 0
-    ans = [ans, chitoi(tehai)].max if mask & CHITOI != 0
-    ans = [ans, kokushi(tehai)].max if mask & KOKUSI != 0
+    ans = [ans, normal(tehai, need_mentsu)].min if mask & NORMAL != 0
+    ans = [ans, chitoi(tehai)].min if mask & CHITOI != 0
+    ans = [ans, kokushi(tehai)].min if mask & KOKUSI != 0
     return ans
   end
 
