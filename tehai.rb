@@ -97,7 +97,7 @@ class Tehai < MjaiComponentLeaf
     cnt = @tehai.count(pai)
     
     ans << Meld.new(:pon,       pai, [pai, pai]) if cnt >= 2
-    ans << Meld.new(:daiminkan, pai, [pai, pai, pai]) if cnt >= 3
+    #ans << Meld.new(:daiminkan, pai, [pai, pai, pai]) if cnt >= 3
     
     if allow_chi && !pai.jihai?
       
