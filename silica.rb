@@ -179,8 +179,8 @@ class Silica < UseMjaiComponent
   def eval_meld_discard(md)
     SilicaEvalInfo.new(
       md.discard,
-      @tehai.shanten_list_removed(md.consumed_discard, yakuari, Shanten::NORMAL),
-      @tehai.ukeire_list_removed(@pai_count, md.consumed_discard, yakuari, Shanten::NORMAL),
+      @tehai.shanten_list_removed(md.consumed_discard, yakuari || @yakuhai.check(md.discard), Shanten::NORMAL),
+      @tehai.ukeire_list_removed(@pai_count, md.consumed_discard, yakuari || @yakuhai.check(md.discard), Shanten::NORMAL),
       0,
       @risk.estimate(md.discard)
     )
@@ -208,22 +208,20 @@ class Silica < UseMjaiComponent
           Action::none()
         elsif @reach_others.check # リーチを受けてる時は鳴かない
           Action::none()
-        elsif @yakuhai.check(pai) && @tehai.count(pai) == 2 # 役牌は鳴く
-          Action::pon(@id, actor, pai, [pai, pai])
         else # 全列挙して比較する
           alternatives = 
             @tehai.list_naki_dahai(pai, (@id - actor + 4) % 4 == 1).select do |meld|
-              yakuari || meld.all?{|p|!p.yaochu?}
+              yakuari || @yakuhai.check(pai) || meld.all?{|p|!p.yaochu?}
             end
           alternatives << MeldDiscard::None
 
           $stderr.puts alternatives.to_s
 
-          sel = alternatives.max_by do |meld_discard|
-            if meld_discard.type == :none
+          sel = alternatives.max_by do |md|
+            if md.type == :none
               SilicaEvalInfo.new(nil, @tehai.shanten(yakuari || menzen, mask), @tehai.ukeire(@pai_count, yakuari || menzen, mask), 50, 5).to_i # TODO: FIXME: 5 is hyper-tenuki
             else
-              eval_meld_discard(meld_discard).to_i
+              eval_meld_discard(md).to_i
             end
           end
           
