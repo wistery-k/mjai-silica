@@ -287,6 +287,21 @@ class Silica < UseMjaiComponent
     end
   end
 
+  def daiminkan(action)
+    super
+    Action::none()
+  end
+
+  def ankan(action)
+    super
+    Action::none()
+  end
+
+  def kakan(action)
+    super
+    Action::none()
+  end
+
   def hora(action)
     super
     Action::none()
