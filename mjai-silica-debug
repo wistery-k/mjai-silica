@@ -60,6 +60,8 @@ begin
       response = ai.dora(action)
     when 'hora'
       response = ai.hora(action)
+    when 'ryukyoku'
+      response = ai.ryukyoku(action)
     when 'end_kyoku'
       response = ai.end_kyoku(action)
     when 'error'
